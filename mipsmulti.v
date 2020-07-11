@@ -184,13 +184,6 @@ module aludec(input  [5:0] funct,
 
 endmodule
 
-module mem (input [31:0] Adr, input [31:0] WD, input memwrite, input clk, output [31:0] RD);
-  reg  [31:0] RAM [63:0]; //Memory of 961 bits (Limited due to word size)
-  assign RD = RAM[Adr[31:2]];
-  always @ (posedge clk)
-  if (memwrite) RAM[Adr[31:2]] = WD;
-endmodule
-
 module regfile(input          clk, 
                input          we3, 
                input   [4:0]  ra1, ra2, wa3, 
@@ -245,14 +238,14 @@ module datapath(input          clk, reset,
                 input   [31:0] readdata);
 
   // Below are the internal signals of the datapath module.
-/*
+
   wire [4:0]  writereg;
   wire [31:0] pcnext;
   reg [31:0]  pc;
-  reg [31:0] instr, data
+  reg [31:0] instr, data;
   wire [31:0] srca, srcb;
   reg [31:0] a;
-  wire [31:0] aluresult, 
+  wire [31:0] aluresult;
   reg [31:0] aluout;
   wire [31:0] signimm;   // the sign-extended immediate
   wire [31:0] signimmsh;	// the sign-extended immediate shifted left by 2
@@ -264,7 +257,7 @@ module datapath(input          clk, reset,
   // Register Logic
 
   //Using clock to pass instrucciontion the instructions
-  @always(posedge clk) begin
+  always @ (posedge clk) begin
     if(irwrite)  instr <=  readdata;
     data <= readdata;
   end
@@ -284,13 +277,10 @@ module datapath(input          clk, reset,
                  instr[20:16], writereg,
                  wd3, rd1, rd2);
   //changing a and b only in clk
-  @always (posedge clk)begin
+  always @ (posedge clk) begin
     a <= rd1;
     writedata <= rd2;
   end
-  // ni idea para que es este mux
-  mux2 #(32)  resmux(aluout, readdata,
-                     memtoreg, result);
   //sign extend and l2
   
   signext     se(instr[15:0], signimm);
@@ -300,28 +290,28 @@ module datapath(input          clk, reset,
   mux2 #(32)  srabmux(pc, a, alusrca,
                       srca);
 
-  mux4 #(32)  srcbmux(b, 32'd4, signimm, signimmsh, alusrcb,
+  mux4 #(32)  srcbmux(writedata, 32'd4, signimm, signimmsh, alusrcb,
                       srcb);
 
 
   alu         alu(alucontrol, aluresult, zero,srca, srcb);
 
-  @always (posedge clk)begin
+  always @ (posedge clk)begin
     aluout <= aluresult;
   end  
 
 
 
   //Pc logic
-  mux4 #(32)  pcnextMux(aluresult, aluout, {pc[31:28], {instr[25:0], 2'b00} }, 32'd0, pcsrc,
+  mux3 #(32)  pcnextMux(aluresult, aluout, {pc[31:28], {instr[25:0], 2'b00} }, pcsrc,
                      pcnext );
 
-  @always(posedge clk)begin
+  always @ (posedge clk)begin
     if(pcen) pc <= pcnext;
   end
 
   //return Adr
-    mux2 #(32)  srabmux(pc, aluout, iord,
+    mux2 #(32)  adrmux(pc, aluout, iord,
                       adr);
 
 
@@ -343,7 +333,6 @@ module datapath(input          clk, reset,
 
 
   // datapath
-  */
 endmodule
 
 

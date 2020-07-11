@@ -4,11 +4,11 @@
 // and unified memory
 //------------------------------------------------
 
-module top(input  logic        clk, reset, 
-           output logic [31:0] writedata, adr, 
-           output logic        memwrite);
+module top(input          clk, reset, 
+           output  [31:0] writedata, adr, 
+           output         memwrite);
 
-  logic [31:0] readdata;
+  wire [31:0] readdata;
   
   // microprocessor (control & datapath)
   mips mips(clk, reset, adr, writedata, memwrite, readdata);
