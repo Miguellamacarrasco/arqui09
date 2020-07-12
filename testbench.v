@@ -5,6 +5,7 @@ module tb;
     wire memwrite;
     top tp(clk, reset, writedata, adr, memwrite);
     always @ (*) begin #1 clk <= !clk; end
+    always @ (posedge clk) begin if (adr == 32'h4c) $finish; end
     initial begin
         $dumpfile("basura.vcd");
         $dumpvars(0);
