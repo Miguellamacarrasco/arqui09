@@ -254,6 +254,8 @@ module datapath(input          clk, reset,
   always @ (*) begin
     if (reset) begin pc <= 0; end 
   end
+
+  
   // Register Logic
 
   //Using clock to pass instrucciontion the instructions
