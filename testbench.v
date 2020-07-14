@@ -12,7 +12,7 @@ module tb;
         end
     end
     initial begin
-        $dumpfile("basura.vcd");
+        $dumpfile("data_path.vcd");
         $dumpvars(0);
         clk = 0;
         reset = 1;
